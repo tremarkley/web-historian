@@ -26,8 +26,26 @@ exports.sendResponse = function(res, data, statusCode) {
   res.end(data);
 };
 
-exports.readResponse = function() {
-
+exports.readRequest = function(req, res) {
+  let data = '';
+  req.on('data', (chunk) => {
+    data += chunk;
+  });
+  req.on('end', () => {
+    try {
+      console.log('data from request: ' + data);
+      //callback(data);
+      statusCode = 201;
+      res.writeHead(statusCode, exports.headers);
+      res.end('Successful POST');
+    } catch (e) {
+      //error handling
+      statusCode = 403;
+      var headers = httphelpers.headers;
+      res.writeHead(statusCode, headers);
+      res.end('POST Failed: ' + e.toString());
+    }
+  });
 };
 
 

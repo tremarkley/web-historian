@@ -24,20 +24,7 @@ var retrieveHomePage = function(req, res) {
 };
 
 var handlePost = function(req, res) {
-  let data = '';
-  req.on('data', (chunk) => {
-    data += chunk;
-  });
-  req.on('end', () => {
-    try {
-      statusCode = 201;
-      var headers = httphelpers.headers;
-      res.writeHead(statusCode, headers);
-      res.end(JSON.stringify({results: 'Successful POST'}));
-    } catch (e) {
-      //error handling
-    }
-  });
+  httphelpers.readRequest(req, res);
 };
 
 var Homepage = function(req, res) {
@@ -47,8 +34,6 @@ var Homepage = function(req, res) {
     handlePost(req, res);
   }
 };
-
-
 
 var retrieveStyles = function(req, res) {
   var stylesPath = __dirname + '/public/styles.css';
