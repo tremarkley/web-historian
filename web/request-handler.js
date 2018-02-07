@@ -19,9 +19,9 @@ var retrieveAsset = function(path, req, res) {
 };
 
 var retrieveHomePage = function(req, res) {
-    var homePagePath = __dirname + '/public/index.html';
-    retrieveAsset(homePagePath, req, res);
-}
+  var homePagePath = __dirname + '/public/index.html';
+  retrieveAsset(homePagePath, req, res);
+};
 
 var handlePost = function(req, res) {
   let data = '';
@@ -37,8 +37,8 @@ var handlePost = function(req, res) {
     } catch (e) {
       //error handling
     }
-  })
-}
+  });
+};
 
 var Homepage = function(req, res) {
   if (req.method === 'GET') {

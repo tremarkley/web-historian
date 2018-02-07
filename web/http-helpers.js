@@ -28,7 +28,7 @@ exports.sendResponse = function(res, data, statusCode) {
 
 exports.readResponse = function() {
 
-}
+};
 
 
 
