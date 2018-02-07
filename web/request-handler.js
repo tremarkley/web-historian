@@ -7,8 +7,9 @@ var fs = require('fs');
 
 var retrieveAsset = function(path, req, res) {
   try {
-    httphelpers.serveAssets(res, path, function(res, data) {
-      res.end(data);
+    httphelpers.serveAssets(res, path, function(res, data, statusCode) {
+      //res.end(data);
+      httphelpers.sendResponse(res, data, statusCode);
     });
   } catch (e) {
     statusCode = 403;
@@ -17,10 +18,37 @@ var retrieveAsset = function(path, req, res) {
   }
 };
 
-var retrieveHomepage = function(req, res) {
-  var homePagePath = __dirname + '/public/index.html';
-  retrieveAsset(homePagePath, req, res);
+var retrieveHomePage = function(req, res) {
+    var homePagePath = __dirname + '/public/index.html';
+    retrieveAsset(homePagePath, req, res);
+}
+
+var handlePost = function(req, res) {
+  let data = '';
+  req.on('data', (chunk) => {
+    data += chunk;
+  });
+  req.on('end', () => {
+    try {
+      statusCode = 201;
+      var headers = httphelpers.headers;
+      res.writeHead(statusCode, headers);
+      res.end(JSON.stringify({results: 'Successful POST'}));
+    } catch (e) {
+      //error handling
+    }
+  })
+}
+
+var Homepage = function(req, res) {
+  if (req.method === 'GET') {
+    retrieveHomePage(req, res);
+  } else if (req.method === 'POST') {
+    handlePost(req, res);
+  }
 };
+
+
 
 var retrieveStyles = function(req, res) {
   var stylesPath = __dirname + '/public/styles.css';
@@ -28,7 +56,7 @@ var retrieveStyles = function(req, res) {
 };
 
 var router = {
-  '/': retrieveHomepage,
+  '/': Homepage,
   '/styles.css': retrieveStyles 
 };
 
