@@ -18,7 +18,7 @@ exports.serveAssets = function(res, asset, callback) {
   //res.end(callback(asset));
   var assetData = '';
   fs.readFile(asset, 'utf8', (err, data) => {
-    if (err) throw err;
+    if (err) { throw err; }
     statusCode = 200;
     res.writeHead(statusCode, exports.headers);
     homePageHTML = data;
