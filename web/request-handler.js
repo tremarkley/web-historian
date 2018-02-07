@@ -5,16 +5,31 @@ var httphelpers = require('./http-helpers');
 var fs = require('fs');
 // require more modules/folders here!
 
-var homepage = function(req, res) {
-  var homePageHTML = '';
-  fs.readFile(__dirname + '/public/index.html', 'utf8', (err, data) => {
-    homePageHTML = data;
-    res.end(data);
-  });
+var retrieveAsset = function(req, res) {
+  
+}
+
+var retrieveHomepage = function(req, res) {
+  var homePagePath = __dirname + '/public/index.html';
+  try {
+    httphelpers.serveAssets(res, homePagePath, function(res, data) {
+      res.end(data);
+    })
+  } catch (e) {
+    statusCode = 403;
+    res.writeHead(statusCode, httphelpers.headers);
+    res.end(JSON.stringify(e));
+  }
 };
 
+var retrieveStyles = function(req, res) {
+
+}
+
+
 var router = {
-  '/': homepage
+  '/': retrieveHomepage,
+  '/styles.css' : retrieveStyles 
 };
 
 exports.handleRequest = function (req, res) {
