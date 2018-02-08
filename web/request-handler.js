@@ -42,24 +42,24 @@ var handlePost = function(req, res) {
         retrieveAsset(path, req, res, 200);
       } else {
         archive.isUrlInList(url, function(result) {
-        //result returns whether the url was found in the list
-        if (!result) {
-          archive.addUrlToList(url, function() {
+          //result returns whether the url was found in the list
+          if (!result) {
+            archive.addUrlToList(url, function() {
+              statusCode = 302;
+              console.log('statusCode ' + statusCode);
+              //httphelpers.headers['Content-Type'] = 'application/json';
+              res.writeHead(statusCode, httphelpers.headers);
+              //res.end(JSON.stringify({results: 'Successful POST'}));
+              retrieveLoadingPage(req, res);
+            });
+          } else {
             statusCode = 302;
-            console.log('statusCode ' + statusCode);
-            //httphelpers.headers['Content-Type'] = 'application/json';
+            httphelpers.headers['Content-Type'] = 'application/json';
             res.writeHead(statusCode, httphelpers.headers);
-            //res.end(JSON.stringify({results: 'Successful POST'}));
-            retrieveLoadingPage(req, res);
-          });
-        } else {
-          statusCode = 302;
-          httphelpers.headers['Content-Type'] = 'application/json';
-          res.writeHead(statusCode, httphelpers.headers);
-          res.end(JSON.stringify({results: 'Successful POST'}));
-        }
-      });
-    }
+            res.end(JSON.stringify({results: 'Successful POST'}));
+          }
+        });
+      }
     });
   });
 };

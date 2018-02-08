@@ -2,6 +2,8 @@ var fs = require('fs');
 var path = require('path');
 var _ = require('underscore');
 var readline = require('readline');
+var http = require('http');
+var httphelpers = require('../web/http-helpers');
 
 /*
  * You will need to reuse the same paths many times over in the course of this sprint.
@@ -72,5 +74,32 @@ exports.isUrlArchived = function(url, callback) {
   });
 };
 
+exports.writeToArchivedSites = function(url, data) {
+  var path = exports.paths.archivedSites + '/' + url;
+  fs.writeFile(path, data, (err) => {
+    if (err) {
+      console.log('unable to save file: ' + err.toString());
+    }
+    console.log('successfully saved file');
+  })
+}
+
 exports.downloadUrls = function(urls) {
+  for (var i = 0; i < urls.length; i++) {
+    var test = urls[i];
+    http.get('http://' + urls[i], function(res) {
+      let data = '';
+      res.on('data', (chunk) => {
+        data += chunk;
+      });
+      res.on('end', () => {
+        try {
+          //write to file
+          exports.writeToArchivedSites(test, data);
+        } catch (e) {
+          console.log('download failed ' + e.toString());
+        }
+      });
+    })
+  }
 };
