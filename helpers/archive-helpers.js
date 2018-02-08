@@ -81,8 +81,8 @@ exports.writeToArchivedSites = function(url, data) {
       console.log('unable to save file: ' + err.toString());
     }
     console.log('successfully saved file');
-  })
-}
+  });
+};
 
 exports.downloadUrls = function(urls) {
   for (var i = 0; i < urls.length; i++) {
@@ -100,6 +100,6 @@ exports.downloadUrls = function(urls) {
           console.log('download failed ' + e.toString());
         }
       });
-    })
+    });
   }
 };
