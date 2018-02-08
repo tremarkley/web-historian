@@ -28,7 +28,7 @@ var handlePost = function(req, res) {
   httphelpers.readRequest(req, res, function(data) {
     var url = querystring.parse(data).url;
     archive.isUrlInList(url, function(result) {
-      console.log('is url in list? ' + result);
+      //result returns whether the url was found in the list
     });
   });
 };

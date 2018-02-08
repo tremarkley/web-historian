@@ -31,13 +31,11 @@ exports.readListOfUrls = function(callback) {
     input: fs.createReadStream(exports.paths.list)
   });
   rl.on('line', function(line) {
-    console.log('Line from file: ' + line);
     callback(line, false);
   });
   rl.on('close', function() {
-    console.log('End of file');
     callback(null, true);
-  })
+  });
 };
 
 exports.isUrlInList = function(url, callback) {
@@ -47,7 +45,7 @@ exports.isUrlInList = function(url, callback) {
       isUrlInList = true;
     }
     if (isEnd) {
-      callback(isUrlInList);;
+      callback(isUrlInList);
     }
   });
 };
