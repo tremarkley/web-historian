@@ -13,9 +13,9 @@ var retrieveAsset = function(path, req, res, statusCode) {
       httphelpers.sendResponse(res, data, statusCode);
     });
   } catch (e) {
-    statusCode = 403;
+    statusCode = 404;
     res.writeHead(statusCode, httphelpers.headers);
-    res.end(JSON.stringify(e));
+    res.end('Unable to retrieve asset ' + JSON.stringify(e));
   }
 };
 
@@ -31,27 +31,43 @@ var retrieveHomePage = function(req, res) {
 
 var handlePost = function(req, res) {
   httphelpers.readRequest(req, res, function(data) {
+    //after reading request parse url to find the url that the user is looking for
     var url = querystring.parse(data).url;
     console.log('URL IS ' + url);
-    archive.isUrlInList(url, function(result) {
-      //result returns whether the url was found in the list
-      if (!result) {
-        archive.addUrlToList(url, function() {
-          statusCode = 302;
-          console.log('statusCode ' + statusCode);
-          //httphelpers.headers['Content-Type'] = 'application/json';
-          res.writeHead(statusCode, httphelpers.headers);
-          //res.end(JSON.stringify({results: 'Successful POST'}));
-          retrieveLoadingPage(req, res);
-        });
+    //check if url is archived
+    archive.isUrlArchived(url, function(result) {
+      console.log('is url: ' + url + ' archived: ' + result);
+      if (result) {
+        var path = archive.paths.archivedSites + '/' + url;
+        retrieveAsset(path, req, res, 200);
       } else {
-        statusCode = 302;
-        httphelpers.headers['Content-Type'] = 'application/json';
-        res.writeHead(statusCode, httphelpers.headers);
-        res.end(JSON.stringify({results: 'Successful POST'}));
-      }
+        archive.isUrlInList(url, function(result) {
+        //result returns whether the url was found in the list
+        if (!result) {
+          archive.addUrlToList(url, function() {
+            statusCode = 302;
+            console.log('statusCode ' + statusCode);
+            //httphelpers.headers['Content-Type'] = 'application/json';
+            res.writeHead(statusCode, httphelpers.headers);
+            //res.end(JSON.stringify({results: 'Successful POST'}));
+            retrieveLoadingPage(req, res);
+          });
+        } else {
+          statusCode = 302;
+          httphelpers.headers['Content-Type'] = 'application/json';
+          res.writeHead(statusCode, httphelpers.headers);
+          res.end(JSON.stringify({results: 'Successful POST'}));
+        }
+      });
+    }
     });
   });
+};
+
+var getSiteFromArchive = function(req, res) {
+  var asset = url.parse(req.url).pathname.slice(1);
+  var path = archive.paths.archivedSites + '/' + asset;
+  retrieveAsset(path, req, res, 200);
 };
 
 var Homepage = function(req, res) {
@@ -74,11 +90,16 @@ var router = {
 
 exports.handleRequest = function (req, res) {
   console.log('Serving request type ' + req.method + ' for url ' + req.url);
+  //check to see if there is a url after the url if not go to router
   var route = router[url.parse(req.url).pathname];
   if (route) {
     route(req, res);
   } else {
-    httphelpers.sendResponse(res, '', 404);
+    if (req.method === 'GET') {
+      getSiteFromArchive(req, res);
+    } else {
+      httphelpers.sendResponse(res, '', 404);
+    }
   }
   //always sending back the list at /archives/sites.txt', why was this in here initially?
   //res.end(archive.paths.list);

@@ -15,7 +15,11 @@ exports.serveAssets = function(res, asset, statusCode, callback) {
   // (Static files are things like html (yours or archived from others...),
   // css, or anything that doesn't change often.)
   fs.readFile(asset, 'utf8', (err, data) => {
-    if (err) { throw err; }
+    if (err) { 
+      statusCode = 404;
+      res.writeHead(statusCode, exports.headers);
+      res.end('Unable to retrieve asset ' + JSON.stringify(err));
+    }
     callback(res, data, statusCode);
   });
 };
