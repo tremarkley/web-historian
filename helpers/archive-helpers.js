@@ -92,7 +92,7 @@ exports.writeToArchivedSites = function(url, data) {
 exports.downloadUrls = function(urls) {
   urls.map((url) => {
     logger.log('getting html for ' + url);
-     http.get('http://' + url, function(res) {
+    http.get('http://' + url, function(res) {
       let data = '';
       res.on('data', (chunk) => {
         data += chunk;
@@ -108,5 +108,5 @@ exports.downloadUrls = function(urls) {
         }
       });
     });
-  })
+  });
 };
