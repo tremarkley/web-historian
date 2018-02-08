@@ -29,6 +29,9 @@ var handlePost = function(req, res) {
     var url = querystring.parse(data).url;
     archive.isUrlInList(url, function(result) {
       //result returns whether the url was found in the list
+      if (!result) {
+        archive.addUrlToList(url);
+      }
     });
   });
 };

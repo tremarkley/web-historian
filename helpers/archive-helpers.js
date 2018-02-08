@@ -40,7 +40,7 @@ exports.readListOfUrls = function(callback) {
 
 exports.isUrlInList = function(url, callback) {
   var isUrlInList = false;
-   exports.readListOfUrls(function(array) {
+  exports.readListOfUrls(function(array) {
     for (var i = 0; i < array.length; i++) {
       if (array[i] === url) {
         isUrlInList = true;
@@ -52,6 +52,14 @@ exports.isUrlInList = function(url, callback) {
 };
 
 exports.addUrlToList = function(url, callback) {
+  //use fs appendfile to append to the exports.paths.list
+  fs.appendFile(exports.paths.list, url + '\n', (err) => {
+    if (err) { throw err; }
+    console.log('successfully appended url to list');
+    if (callback) {
+      callback();
+    }
+  })
 };
 
 exports.isUrlArchived = function(url, callback) {
