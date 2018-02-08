@@ -69,7 +69,7 @@ exports.isUrlArchived = function(url, callback) {
     } else {
       callback(false);
     }
-  })
+  });
 };
 
 exports.downloadUrls = function(urls) {
