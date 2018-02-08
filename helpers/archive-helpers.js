@@ -63,6 +63,13 @@ exports.addUrlToList = function(url, callback) {
 };
 
 exports.isUrlArchived = function(url, callback) {
+  fs.stat(exports.paths.archivedSites + '/' + url, (err, stats) => {
+    if (stats !== undefined) {
+      callback(true);
+    } else {
+      callback(false);
+    }
+  })
 };
 
 exports.downloadUrls = function(urls) {
