@@ -25,28 +25,29 @@ exports.initialize = function(pathsObj) {
 
 // The following function names are provided to you to suggest how you might
 // modularize your code. Keep it clean!
-
 exports.readListOfUrls = function(callback) {
+  var arraySites = [];
   var rl = readline.createInterface({
     input: fs.createReadStream(exports.paths.list)
   });
   rl.on('line', function(line) {
-    callback(line, false);
+    arraySites.push(line);
   });
   rl.on('close', function() {
-    callback(null, true);
+    callback(arraySites);
   });
 };
 
 exports.isUrlInList = function(url, callback) {
   var isUrlInList = false;
-  exports.readListOfUrls(function(line, isEnd) {
-    if (line === url) {
-      isUrlInList = true;
+   exports.readListOfUrls(function(array) {
+    for (var i = 0; i < array.length; i++) {
+      if (array[i] === url) {
+        isUrlInList = true;
+        break;
+      }
     }
-    if (isEnd) {
-      callback(isUrlInList);
-    }
+    callback(isUrlInList);
   });
 };
 
