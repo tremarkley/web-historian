@@ -1,6 +1,7 @@
 var fs = require('fs');
 var path = require('path');
 var _ = require('underscore');
+var readline = require('readline');
 
 /*
  * You will need to reuse the same paths many times over in the course of this sprint.
@@ -26,9 +27,29 @@ exports.initialize = function(pathsObj) {
 // modularize your code. Keep it clean!
 
 exports.readListOfUrls = function(callback) {
+  var rl = readline.createInterface({
+    input: fs.createReadStream(exports.paths.list)
+  });
+  rl.on('line', function(line) {
+    console.log('Line from file: ' + line);
+    callback(line, false);
+  });
+  rl.on('close', function() {
+    console.log('End of file');
+    callback(null, true);
+  })
 };
 
 exports.isUrlInList = function(url, callback) {
+  var isUrlInList = false;
+  exports.readListOfUrls(function(line, isEnd) {
+    if (line === url) {
+      isUrlInList = true;
+    }
+    if (isEnd) {
+      callback(isUrlInList);;
+    }
+  });
 };
 
 exports.addUrlToList = function(url, callback) {

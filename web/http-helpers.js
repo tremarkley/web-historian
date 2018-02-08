@@ -26,7 +26,7 @@ exports.sendResponse = function(res, data, statusCode) {
   res.end(data);
 };
 
-exports.readRequest = function(req, res) {
+exports.readRequest = function(req, res, callback) {
   let data = '';
   req.on('data', (chunk) => {
     data += chunk;
@@ -34,7 +34,7 @@ exports.readRequest = function(req, res) {
   req.on('end', () => {
     try {
       console.log('data from request: ' + data);
-      //callback(data);
+      callback(data);
       statusCode = 201;
       res.writeHead(statusCode, exports.headers);
       res.end('Successful POST');

@@ -3,6 +3,7 @@ var archive = require('../helpers/archive-helpers');
 var url = require('url');
 var httphelpers = require('./http-helpers');
 var fs = require('fs');
+var querystring = require('querystring');
 // require more modules/folders here!
 
 var retrieveAsset = function(path, req, res) {
@@ -24,7 +25,12 @@ var retrieveHomePage = function(req, res) {
 };
 
 var handlePost = function(req, res) {
-  httphelpers.readRequest(req, res);
+  httphelpers.readRequest(req, res, function(data) {
+    var url = querystring.parse(data).url;
+    archive.isUrlInList(url, function(result) {
+      console.log('is url in list? ' + result);
+    });
+  });
 };
 
 var Homepage = function(req, res) {
