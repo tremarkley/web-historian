@@ -64,7 +64,7 @@ var Homepage = function(req, res) {
 
 var retrieveStyles = function(req, res) {
   var stylesPath = __dirname + '/public/styles.css';
-  retrieveAsset(stylesPath, req, res);
+  retrieveAsset(stylesPath, req, res, 200);
 };
 
 var router = {
