@@ -2,6 +2,7 @@ archives/*
 archives/*.txt
 test/testdata/sites/*
 test/testdata/sites.txt
+logs/logs.txt
 
 ###OSX###
 
@@ -28,7 +29,6 @@ lib-cov
 *.gz
 
 pids
-logs
 results
 
 npm-debug.log
