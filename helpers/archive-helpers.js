@@ -3,7 +3,9 @@ var path = require('path');
 var _ = require('underscore');
 var readline = require('readline');
 var http = require('http');
+var https = require('https');
 var httphelpers = require('../web/http-helpers');
+var logger = require('../logs/logger');
 
 /*
  * You will need to reuse the same paths many times over in the course of this sprint.
@@ -58,6 +60,7 @@ exports.addUrlToList = function(url, callback) {
   fs.appendFile(exports.paths.list, url + '\n', (err) => {
     if (err) { throw err; }
     console.log('successfully appended url to ' + exports.paths.list);
+    logger.log('successfully appended url to ' + exports.paths.list);
     if (callback) {
       callback();
     }
@@ -79,15 +82,17 @@ exports.writeToArchivedSites = function(url, data) {
   fs.writeFile(path, data, (err) => {
     if (err) {
       console.log('unable to save file: ' + err.toString());
+      logger.log('unable to save file: ' + err.toString());
     }
-    console.log('successfully saved file');
+    console.log('successfully saved file at ' + path);
+    logger.log('successfully saved file at ' + path);
   });
 };
 
 exports.downloadUrls = function(urls) {
-  for (var i = 0; i < urls.length; i++) {
-    var test = urls[i];
-    http.get('http://' + urls[i], function(res) {
+  urls.map((url) => {
+    logger.log('getting html for ' + url);
+     http.get('http://' + url, function(res) {
       let data = '';
       res.on('data', (chunk) => {
         data += chunk;
@@ -95,11 +100,13 @@ exports.downloadUrls = function(urls) {
       res.on('end', () => {
         try {
           //write to file
-          exports.writeToArchivedSites(test, data);
+          logger.log('received data for: ' + url + ' data: ' + data);
+          exports.writeToArchivedSites(url, data);
         } catch (e) {
           console.log('download failed ' + e.toString());
+          logger.log('download failed ' + e.toString());
         }
       });
     });
-  }
+  })
 };
