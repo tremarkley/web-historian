@@ -35,9 +35,6 @@ exports.readRequest = function(req, res, callback) {
     try {
       console.log('data from request: ' + data);
       callback(data);
-      statusCode = 201;
-      res.writeHead(statusCode, exports.headers);
-      res.end('Successful POST');
     } catch (e) {
       //error handling
       statusCode = 403;

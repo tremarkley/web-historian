@@ -27,10 +27,19 @@ var retrieveHomePage = function(req, res) {
 var handlePost = function(req, res) {
   httphelpers.readRequest(req, res, function(data) {
     var url = querystring.parse(data).url;
+    console.log('URL IS ' + url);
     archive.isUrlInList(url, function(result) {
       //result returns whether the url was found in the list
       if (!result) {
-        archive.addUrlToList(url);
+        archive.addUrlToList(url, function() {
+          statusCode = 302;
+          res.writeHead(statusCode, exports.headers);
+          res.end('Successful POST');
+        });
+      } else {
+        statusCode = 302;
+        res.writeHead(statusCode, exports.headers);
+        res.end('Successful POST');
       }
     });
   });

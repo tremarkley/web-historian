@@ -55,11 +55,11 @@ exports.addUrlToList = function(url, callback) {
   //use fs appendfile to append to the exports.paths.list
   fs.appendFile(exports.paths.list, url + '\n', (err) => {
     if (err) { throw err; }
-    console.log('successfully appended url to list');
+    console.log('successfully appended url to ' + exports.paths.list);
     if (callback) {
       callback();
     }
-  })
+  });
 };
 
 exports.isUrlArchived = function(url, callback) {
