@@ -6,9 +6,9 @@ var fs = require('fs');
 var querystring = require('querystring');
 // require more modules/folders here!
 
-var retrieveAsset = function(path, req, res) {
+var retrieveAsset = function(path, req, res, statusCode) {
   try {
-    httphelpers.serveAssets(res, path, function(res, data, statusCode) {
+    httphelpers.serveAssets(res, path, statusCode, function(res, data, statusCode) {
       //res.end(data);
       httphelpers.sendResponse(res, data, statusCode);
     });
@@ -19,9 +19,14 @@ var retrieveAsset = function(path, req, res) {
   }
 };
 
+var retrieveLoadingPage = function(req, res) {
+  var loadingPagePath = archive.paths.siteAssets + '/loading.html';
+  retrieveAsset(loadingPagePath, req, res, 302);
+};
+
 var retrieveHomePage = function(req, res) {
   var homePagePath = __dirname + '/public/index.html';
-  retrieveAsset(homePagePath, req, res);
+  retrieveAsset(homePagePath, req, res, 200);
 };
 
 var handlePost = function(req, res) {
@@ -33,13 +38,17 @@ var handlePost = function(req, res) {
       if (!result) {
         archive.addUrlToList(url, function() {
           statusCode = 302;
-          res.writeHead(statusCode, exports.headers);
-          res.end('Successful POST');
+          console.log('statusCode ' + statusCode);
+          //httphelpers.headers['Content-Type'] = 'application/json';
+          res.writeHead(statusCode, httphelpers.headers);
+          //res.end(JSON.stringify({results: 'Successful POST'}));
+          retrieveLoadingPage(req, res);
         });
       } else {
         statusCode = 302;
-        res.writeHead(statusCode, exports.headers);
-        res.end('Successful POST');
+        httphelpers.headers['Content-Type'] = 'application/json';
+        res.writeHead(statusCode, httphelpers.headers);
+        res.end(JSON.stringify({results: 'Successful POST'}));
       }
     });
   });
